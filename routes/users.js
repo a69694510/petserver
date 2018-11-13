@@ -1,4 +1,5 @@
 const router = require('koa-router')()
+var UserModel = require('../model/UserModel');
 
 router.prefix('/users')
 
@@ -9,10 +10,12 @@ router.get('/', function (ctx, next) {
 router.get('/bar', function (ctx, next) {
   ctx.body = 'this is a users/bar response'
 })
-router.post('/signup', function (ctx, next) {
-  let email = ctx.request.body.email;
-  ctx.body = 'shoudao:'+email
-  console.log(email)
+router.get('/mypet',function(ctx,next){
+  //注意跨域访问拿到session
+  let loginbean = ctx.session.loginbean;
+  console.log('-------------------------')
+
+  ctx.body = 'mypet'
 })
 
 

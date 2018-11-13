@@ -5,12 +5,16 @@ const json = require('koa-json')
 const onerror = require('koa-onerror')
 const bodyparser = require('koa-bodyparser')
 const logger = require('koa-logger')
-
 //kuayu
 const cors = require('koa-cors')
 
+
+const session = require('koa-generic-session');
+
 const index = require('./routes/index')
 const users = require('./routes/users')
+const api = require('./routes/api')
+
 
 // error handler
 onerror(app)
@@ -36,10 +40,13 @@ app.use(async (ctx, next) => {
 })
 //Before router
 app.use(cors())
-
+//keys
+app.keys=['my secret key'];
+app.use(session());
 // routes
 app.use(index.routes(), index.allowedMethods())
 app.use(users.routes(), users.allowedMethods())
+app.use(api.routes(), api.allowedMethods())
 
 // error-handling
 app.on('error', (err, ctx) => {
