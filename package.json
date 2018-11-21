@@ -27,6 +27,7 @@
   },
   "devDependencies": {
     "co": "^4.6.0",
+    "formidable": "^1.2.1",
     "koa-cors": "0.0.16",
     "koa-generic-session": "^2.0.1",
     "mysql": "^2.16.0",

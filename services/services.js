@@ -1,3 +1,3 @@
 exports.userService = require('./userService').service;
-exports.PetService = require('./PetService').service;
+exports.petService = require('./petService').service;
 exports.emptyService = require('./EmptyService').service;
