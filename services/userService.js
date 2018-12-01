@@ -68,5 +68,20 @@ class UserService{
       ctx.body = 0
     }
   }
+
+  //这个方法不用查库，就看看当前用户，登陆过没有
+  async getLoginBean(ctx){
+    let loginbean = ctx.session.loginbean
+    if(loginbean){
+      ctx.body=loginbean
+    }else {
+      ctx.body=0
+    }
+  }
+  async logout(ctx){
+    //直接杀session
+    delete ctx.session.loginbean;
+    ctx.body=1
+  }
 }
 exports.service = UserService

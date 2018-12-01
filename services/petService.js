@@ -27,10 +27,9 @@ class PetService{
         }
         else {
           //第一次创建的时候，图片可以是空的
-          fields.petimg = ''
+            fields.petimg='';
             resolve(fields);
         }
-        resolve(fields);
       })
     });
     fields.uid = loginbean.id
@@ -61,6 +60,38 @@ class PetService{
       ctx.body='登陆过期'
     }
   }
+  async updpetInfo(ctx){
+    let loginbean = ctx.session.loginbean
+    let form = new formidable.IncomingForm()  //创建上传表单
+    form.encoding = 'utf-8';
+    form.uploadDir = './public/images/petimgs';   //设置上传目录
+    form.keepExtensions = true; //保留后缀
+    form.maxFieldsSize = 5 * 1024 * 1024;   //文件大小5m
+    let fields = await new Promise(function(resolve,reject){
+      form.parse(ctx.req,function(err,fields,files){
+        if(err){
+          resolve(0);
+          return;
+        }
+        //去掉路径里面的public
+        // fields.petimg = files.petimg.path.replace('public','')
+        if(files.petimgFile.size>0){
+          fields.petimg = files.petimgFile.path.replace('public','');
+          resolve(fields);
+        }
+        resolve(fields);
+      })
+    });
+    // fields.uid = loginbean.id
+    //存储
+    let rs = await PetinfoModel.update(fields,{
+      where:{
+        'id':fields.pid,
+        'uid':loginbean.id
+      }
+    });
+    ctx.body=1
+  }
   async delpetInfo(ctx){
     let loginbean = ctx.session.loginbean;
     if(loginbean){
@@ -75,41 +106,6 @@ class PetService{
     }else {
       ctx.body=0
     }
-  }
-  async updpetInfo(ctx){
-    let loginbean = ctx.session.loginbean
-    let form = new formidable.IncomingForm()  //创建上传表单
-    form.encoding = 'utf-8';
-    form.uploadDir = './public/images/petimgs';   //设置上传目录
-    form.keepExtensions = true; //保留后缀
-    form.maxFieldsSize = 5 * 1024 * 1024;   //文件大小5m
-    // console.log(ctx.req);
-    //这里最好使用异步接收参数，同步太傻了
-    let fields = await new Promise(function(resolve,reject){
-      form.parse(ctx.req,function(err,fields,files){
-        if(err){
-          console.log(err)
-          resolve(0);
-          return;
-        }
-        //去掉路径里面的public
-        // fields.petimg = files.petimg.path.replace('public','')
-        if(files.petimgFile.size>0){
-          fields.petimg = files.petimgFile.path.replace('public','')
-          resolve(fields);
-        }
-        resolve(fields);
-      })
-    });
-    fields.uid = loginbean.id
-    //存储
-    let rs = await PetinfoModel.update(fields,{
-      where:{
-        'id':fields.pid,
-        'uid':loginbean.id
-      }
-    });
-    ctx.body=1
   }
 }
 exports.service = PetService
